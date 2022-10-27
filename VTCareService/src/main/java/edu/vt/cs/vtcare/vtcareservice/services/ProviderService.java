@@ -4,6 +4,7 @@ import edu.vt.cs.vtcare.vtcareservice.dao.ProviderDao;
 import edu.vt.cs.vtcare.vtcareservice.models.Provider;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Holds the business logic for providers.
@@ -27,5 +28,26 @@ public class ProviderService {
         long providerId = providerDao.persistProvider(provider);
         provider.setProviderId(providerId);
         return provider;
+    }
+
+    public List<Provider> getProvider(String id) throws Exception{
+        long num_id =Long.parseLong(id);
+        try {
+            return providerDao.getProvider(num_id);
+        }
+        catch(Exception e){
+            System.out.println(e);
+            throw new Exception();
+        }
+    }
+
+    public List<Provider> getProviders() throws Exception{
+        try {
+            return providerDao.getProviders();
+        }
+        catch(Exception e){
+            System.out.println(e);
+            throw new Exception();
+        }
     }
 }
