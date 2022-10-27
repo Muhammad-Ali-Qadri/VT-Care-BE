@@ -41,6 +41,11 @@ public class ProviderService {
         }
     }
 
+    /**
+     *
+     * @return List of providers, empty list if no providers
+     * @throws Exception if cascaded from DAO.
+     */
     public List<Provider> getProviders() throws Exception{
         try {
             return providerDao.getProviders();

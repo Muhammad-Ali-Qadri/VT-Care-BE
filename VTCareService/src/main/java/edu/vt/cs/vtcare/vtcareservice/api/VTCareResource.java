@@ -23,6 +23,12 @@ public class VTCareResource {
         }
     }
 
+    /**
+     *
+     * @param providerid to search for a specific provider
+     * @return the provider
+     * @throws Exception if cascaded from DAO.
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("providers")
