@@ -18,7 +18,7 @@ public class ProviderDao {
             "INSERT INTO providers (name, email, password, gender, date_of_birth, address, contact, specialization, experience)" +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    private static final String FIND_ALL_PROVIDERS =
+    private static final String FIND_ALL_PROVIDERS_SQL =
             "SELECT * " +
                     "FROM providers";
 
@@ -50,6 +50,12 @@ public class ProviderDao {
         }
     }
 
+    /**
+     *
+     * @param id of provider we're looking for
+     * @return list of providers with only 1 entry, when providerID is known
+     * @throws SQLException on SQL errors like table not existing
+     */
     public List<Provider> getProvider(long id) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(FIND_BY_PROVIDER_ID_SQL)) {
             statement.setLong(1, id);
@@ -58,17 +64,7 @@ public class ProviderDao {
             List<Provider> items = new ArrayList<>();
 
             if(res.next() ){
-                Provider prov = new Provider(res.getObject("name", String.class) ,
-                        res.getObject("email", String.class) ,
-                        res.getObject("password", String.class),
-                        res.getObject("gender", String.class) ,
-                        res.getObject("date_of_birth", Date.class).toString(),
-                        res.getObject("address", String.class),
-                        res.getObject("contact", String.class),
-                        res.getObject("experience", Integer.class),
-                        res.getObject("specialization", String.class)
-                        );
-                items.add(prov);
+                extractProvider(res, items);
             }
             return items;
         } catch (SQLException e) {
@@ -76,29 +72,44 @@ public class ProviderDao {
         }
     }
 
+    /**
+     *
+     * @return ListOfAllProviders
+     * @throws SQLException When query is malformed, or other SQL related issues.
+     */
     public List<Provider> getProviders() throws SQLException{
-        try (PreparedStatement statement = connection.prepareStatement(FIND_ALL_PROVIDERS)) {
+        try (PreparedStatement statement = connection.prepareStatement(FIND_ALL_PROVIDERS_SQL)) {
 
             ResultSet res = statement.executeQuery();
             List<Provider> items = new ArrayList<>();
 
             while(res.next() ){
-                Provider prov = new Provider(res.getObject("name", String.class) ,
-                        res.getObject("email", String.class) ,
-                        res.getObject("password", String.class),
-                        res.getObject("gender", String.class) ,
-                        res.getObject("date_of_birth", Date.class).toString(),
-                        res.getObject("address", String.class),
-                        res.getObject("contact", String.class),
-                        res.getObject("experience", Integer.class),
-                        res.getObject("specialization", String.class)
-                );
-                items.add(prov);
+                extractProvider(res, items);
             }
             return items;
         } catch (SQLException e) {
             throw new SQLException("Encountered problem fetching providers ", e);
         }
+    }
+
+    /**
+     *
+     * @param res resultset to iterate through, used to construct provider
+     * @param items data structure used to contain providers
+     * @throws SQLException
+     */
+    private void extractProvider(ResultSet res, List<Provider> items) throws SQLException {
+        Provider prov = new Provider(res.getObject("name", String.class) ,
+                res.getObject("email", String.class) ,
+                res.getObject("password", String.class),
+                res.getObject("gender", String.class) ,
+                res.getObject("date_of_birth", Date.class).toString(),
+                res.getObject("address", String.class),
+                res.getObject("contact", String.class),
+                res.getObject("experience", Integer.class),
+                res.getObject("specialization", String.class)
+        );
+        items.add(prov);
     }
 
 
