@@ -101,7 +101,7 @@ public class ProviderDao {
     private void extractProvider(ResultSet res, List<Provider> items) throws SQLException {
         Provider prov = new Provider(res.getObject("name", String.class) ,
                 res.getObject("email", String.class) ,
-                res.getObject("password", String.class),
+                "",// probably don't want to leak a provider's password
                 res.getObject("gender", String.class) ,
                 res.getObject("date_of_birth", Date.class).toString(),
                 res.getObject("address", String.class),
@@ -109,6 +109,7 @@ public class ProviderDao {
                 res.getObject("experience", Integer.class),
                 res.getObject("specialization", String.class)
         );
+        prov.setProviderId(res.getObject("id", Integer.class) );
         items.add(prov);
     }
 
