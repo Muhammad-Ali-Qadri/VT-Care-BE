@@ -13,7 +13,7 @@ public class ProviderDao {
     }
 
     private static final String CREATE_PROVIDER_SQL =
-            "INSERT INTO providers (provider_name, email, provider_password, gender, date_of_birth, address, contact, specialization, experience)" +
+            "INSERT INTO providers (name, email, password, gender, date_of_birth, address, contact, specialization, experience)" +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     public long persistProvider(Provider provider) throws SQLException {
