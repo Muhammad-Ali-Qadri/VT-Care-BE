@@ -22,11 +22,6 @@ public class ProviderDao {
             "SELECT * " +
                     "FROM providers";
 
-    private static final String FIND_BY_PROVIDER_ID_SQL =
-            "SELECT * " +
-                    "FROM providers " +
-                    "WHERE id = ?";
-
     public long persistProvider(Provider provider) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(CREATE_PROVIDER_SQL, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, provider.getName());
@@ -52,28 +47,6 @@ public class ProviderDao {
 
     /**
      *
-     * @param id of provider we're looking for
-     * @return list of providers with only 1 entry, when providerID is known
-     * @throws SQLException on SQL errors like table not existing
-     */
-    public List<Provider> getProvider(long id) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(FIND_BY_PROVIDER_ID_SQL)) {
-            statement.setLong(1, id);
-
-            ResultSet res = statement.executeQuery();
-            List<Provider> items = new ArrayList<>();
-
-            if(res.next() ){
-                extractProvider(res, items);
-            }
-            return items;
-        } catch (SQLException e) {
-            throw new SQLException("Encountered problem fetching a provider ", e);
-        }
-    }
-
-    /**
-     *
      * @return ListOfAllProviders
      * @throws SQLException When query is malformed, or other SQL related issues.
      */
@@ -81,36 +54,36 @@ public class ProviderDao {
         try (PreparedStatement statement = connection.prepareStatement(FIND_ALL_PROVIDERS_SQL)) {
 
             ResultSet res = statement.executeQuery();
-            List<Provider> items = new ArrayList<>();
+            List<Provider> providers = new ArrayList<>();
 
             while(res.next() ){
-                extractProvider(res, items);
+                providers.add( extractProvider(res) );
             }
-            return items;
+            return providers;
         } catch (SQLException e) {
-            throw new SQLException("Encountered problem fetching providers ", e);
+            System.out.println(e.getStackTrace() );
+            throw e;
         }
     }
 
     /**
      *
      * @param res resultset to iterate through, used to construct provider
-     * @param items data structure used to contain providers
      * @throws SQLException
      */
-    private void extractProvider(ResultSet res, List<Provider> items) throws SQLException {
-        Provider prov = new Provider(res.getObject("name", String.class) ,
-                res.getObject("email", String.class) ,
+    private Provider extractProvider(ResultSet res) throws SQLException {
+        Provider prov = new Provider(res.getString("name") ,
+                res.getString("email") ,
                 "",// probably don't want to leak a provider's password
-                res.getObject("gender", String.class) ,
-                res.getObject("date_of_birth", Date.class).toString(),
-                res.getObject("address", String.class),
-                res.getObject("contact", String.class),
-                res.getObject("experience", Integer.class),
-                res.getObject("specialization", String.class)
+                res.getString("gender") ,
+                res.getDate("date_of_birth").toString(), //initial model has this as a string
+                res.getString("address"),
+                res.getString("contact"),
+                res.getInt("experience"),
+                res.getString("specialization")
         );
-        prov.setProviderId(res.getObject("id", Integer.class) );
-        items.add(prov);
+        prov.setProviderId(res.getInt("id") );
+        return prov;
     }
 
 

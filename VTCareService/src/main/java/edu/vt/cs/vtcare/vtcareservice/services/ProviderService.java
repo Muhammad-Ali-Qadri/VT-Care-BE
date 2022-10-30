@@ -30,17 +30,6 @@ public class ProviderService {
         return provider;
     }
 
-    public List<Provider> getProvider(String id) throws Exception{
-        long num_id =Long.parseLong(id);
-        try {
-            return providerDao.getProvider(num_id);
-        }
-        catch(Exception e){
-            System.out.println(e);
-            throw new Exception();
-        }
-    }
-
     /**
      *
      * @return List of providers, empty list if no providers
@@ -51,8 +40,8 @@ public class ProviderService {
             return providerDao.getProviders();
         }
         catch(Exception e){
-            System.out.println(e);
-            throw new Exception();
+            System.out.println("Fetching providers list, had an issue.");
+            throw e;
         }
     }
 }

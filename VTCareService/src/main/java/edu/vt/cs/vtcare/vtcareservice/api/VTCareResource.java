@@ -19,7 +19,7 @@ public class VTCareResource {
             ProviderService providerService = new ProviderService();
             return providerService.persistProvider(provider);
         } catch(Exception e) {
-            throw new Exception("An exception occurred while persisting the provider details.");
+            throw e;
         }
     }
 
@@ -32,12 +32,13 @@ public class VTCareResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("providers")
-    public List<Provider> getProvider(@QueryParam("providerid") String providerid) throws Exception {
+    public List<Provider> getProvider(String providerid) throws Exception {
         try {
             ProviderService providerService = new ProviderService();
-            return providerid != null ? providerService.getProvider(providerid) : providerService.getProviders();
+            return providerService.getProviders();
         } catch(Exception e) {
-            throw new Exception("An exception occurred while persisting the provider details.");
+            System.out.println("Issue getting provider(s)");
+            throw e;
         }
     }
 }
