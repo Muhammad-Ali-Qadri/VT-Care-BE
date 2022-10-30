@@ -46,12 +46,8 @@ public class VTCareResource {
     @Path("providers/{provider-id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Provider suggestedBooks(@PathParam("provider-id")  long providerId) throws Exception {
-        try {
             ProviderService providerService = new ProviderService();
             return providerService.findProviderById(providerId);
-        } catch(Exception e) {
-            throw new Exception("An exception occurred while finding provider details.");
-        }
     }
 
     /**
