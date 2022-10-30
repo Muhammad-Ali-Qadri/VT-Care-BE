@@ -17,15 +17,22 @@ public class ProviderService {
     }
 
     /**
-     * Only persists provider info.
-     * Need to persist associated
-     * AppointmentSlots and Appointments separately.
-     * @param provider
-     * @return
+     * Persists the given provider entity to database.
+     * @param provider the provider to be persisted.
+     * @return Provider with the generated ID.
      */
     public Provider persistProvider(Provider provider) throws SQLException {
         long providerId = providerDao.persistProvider(provider);
         provider.setProviderId(providerId);
         return provider;
+    }
+
+    /**
+     *
+     * @param providerId id of the provider to be found.
+     * @return the matching Provider from the database.
+     */
+    public Provider findProviderById(long providerId) {
+        return providerDao.findProviderById(providerId);
     }
 }
