@@ -3,9 +3,7 @@ package edu.vt.cs.vtcare.vtcareservice.models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+
 import java.util.List;
 
 public class Provider extends User {
