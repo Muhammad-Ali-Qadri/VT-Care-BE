@@ -27,6 +27,7 @@ dependencies {
     implementation('org.glassfish.jersey.media:jersey-media-json-jackson:2.34')
     implementation('org.glassfish.jersey.inject:jersey-cdi2-se:2.34')
     implementation('org.jboss.weld.se:weld-se-core:3.1.8.Final')
+    implementation('com.google.code.gson:gson:2.10')
     implementation('mysql:mysql-connector-java:8.0.30')
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
