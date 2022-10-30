@@ -18,11 +18,10 @@ public class ProviderService {
     }
 
     /**
-     * Only persists provider info.
-     * Need to persist associated
-     * AppointmentSlots and Appointments separately.
-     * @param provider
-     * @return
+     * Persists the given provider entity to database.
+     *
+     * @param provider the provider to be persisted.
+     * @return Provider with the generated ID.
      */
     public Provider persistProvider(Provider provider) throws SQLException {
         long providerId = providerDao.persistProvider(provider);
@@ -31,17 +30,20 @@ public class ProviderService {
     }
 
     /**
-     *
-     * @return List of providers, empty list if no providers
-     * @throws Exception if cascaded from DAO.
+     * @param providerId id of the provider to be found.
+     * @return the matching Provider from the database.
      */
-    public List<Provider> getProviders() throws Exception{
+    public Provider findProviderById(long providerId) {
+        return providerDao.findProviderById(providerId);
+    }
+
+    public List<Provider> getProviders() throws Exception {
         try {
             return providerDao.getProviders();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Fetching providers list, had an issue.");
             throw e;
         }
     }
+
 }

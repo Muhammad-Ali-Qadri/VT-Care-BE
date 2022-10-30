@@ -3,9 +3,7 @@ package edu.vt.cs.vtcare.vtcareservice.models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+
 import java.util.List;
 
 public class Provider extends User {
@@ -27,6 +25,42 @@ public class Provider extends User {
                     @JsonProperty("contact") String contact,
                     @JsonProperty("experience") int experience,
                     @JsonProperty("specialization") String specialization) {
+        this.setName(name);
+        this.setEmail(email);
+        this.setPassword(password);
+        this.setGender(gender);
+        this.setDate(dob);
+        this.setAddress(address);
+        this.setContact(contact);
+        this.yearsOfExperience = experience;
+        this.specialization = specialization;
+    }
+
+    /**
+     * Provider overloaded constructor.
+     * @param id
+     * @param name
+     * @param email
+     * @param password
+     * @param gender
+     * @param dob
+     * @param address
+     * @param contact
+     * @param specialization
+     * @param experience
+     */
+    public Provider(
+            long id,
+            String name,
+            String email,
+            String password,
+            String gender,
+            String dob,
+            String address,
+            String contact,
+            String specialization,
+            int experience) {
+        this.providerId = id;
         this.setName(name);
         this.setEmail(email);
         this.setPassword(password);

@@ -7,6 +7,10 @@ import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Holds the code that interacts with the database and performs CRUD operations on
+ * the Provider entity.
+ */
 public class ProviderDao {
     private Connection connection;
 
@@ -18,11 +22,20 @@ public class ProviderDao {
             "INSERT INTO providers (name, email, password, gender, date_of_birth, address, contact, specialization, experience)" +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+    private static final String FIND_PROVIDER_BY_ID_SQL =
+            "SELECT * FROM providers where id = ?";
+
     private static final String FIND_ALL_PROVIDERS_SQL =
             "SELECT * " +
                     "FROM providers";
-
-    public long persistProvider(Provider provider) throws SQLException {
+    /**
+     * Executes database query to persist the given provider into the database.
+     * @param provider provider entity
+     * @return generated provider Id.
+     * @throws SQLException
+     */
+    public long persistProvider(Provider provider)  {
+        long providerId = -1;
         try (PreparedStatement statement = connection.prepareStatement(CREATE_PROVIDER_SQL, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, provider.getName());
             statement.setString(2, provider.getEmail());
@@ -34,15 +47,56 @@ public class ProviderDao {
             statement.setString(8, provider.getSpecialization());
             statement.setInt(9, provider.getYearsOfExperience());
             statement.executeUpdate();
-            long providerId = -1;
+
             ResultSet rs = statement.getGeneratedKeys();
             if (rs.next()) {
                 providerId = rs.getLong(1);
             }
-            return providerId;
         } catch (SQLException e) {
-            throw new SQLException("Encountered problem creating a new provider ", e);
+            System.out.println("Encountered problem creating a new provider " + e);
         }
+        return providerId;
+    }
+
+    /**
+     * Finds a provider by Id/
+     * @param providerId
+     * @return the found entity from the database.
+     */
+    public Provider findProviderById(long providerId) {
+        Provider provider = null;
+        try (PreparedStatement statement = connection.prepareStatement(FIND_PROVIDER_BY_ID_SQL)) {
+            statement.setLong(1, providerId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    provider = parseProvider(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Encountered problem while fetching provider. Id = " + providerId + "\n" + e);
+        }
+        return provider;
+    }
+
+    /**
+     * Parses the ResultSet object to build a provider entity.
+     * @param resultSet
+     * @return Provider entity
+     */
+    private Provider parseProvider(ResultSet resultSet) throws SQLException {
+
+        long id = resultSet.getLong("id");
+        String name = resultSet.getString("name");
+        String email = resultSet.getString("email");
+        String password = resultSet.getString("password");
+        String gender = resultSet.getString("gender");
+        String dob = resultSet.getDate("date_of_birth").toString();
+        String address = resultSet.getString("address");
+        String contact = resultSet.getString("contact");
+        String specialization = resultSet.getString("specialization");
+        int experience = resultSet.getInt("experience");
+
+        return new Provider(id, name, email, password, gender, dob, address, contact, specialization, experience);
     }
 
     /**
@@ -57,7 +111,7 @@ public class ProviderDao {
             List<Provider> providers = new ArrayList<>();
 
             while(res.next() ){
-                providers.add( extractProvider(res) );
+                providers.add( parseProvider(res) );
             }
             return providers;
         } catch (SQLException e) {
@@ -65,26 +119,4 @@ public class ProviderDao {
             throw e;
         }
     }
-
-    /**
-     *
-     * @param res resultset to iterate through, used to construct provider
-     * @throws SQLException
-     */
-    private Provider extractProvider(ResultSet res) throws SQLException {
-        Provider prov = new Provider(res.getString("name") ,
-                res.getString("email") ,
-                "",// probably don't want to leak a provider's password
-                res.getString("gender") ,
-                res.getDate("date_of_birth").toString(), //initial model has this as a string
-                res.getString("address"),
-                res.getString("contact"),
-                res.getInt("experience"),
-                res.getString("specialization")
-        );
-        prov.setProviderId(res.getInt("id") );
-        return prov;
-    }
-
-
 }
