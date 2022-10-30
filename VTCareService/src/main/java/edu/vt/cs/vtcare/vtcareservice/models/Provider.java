@@ -38,6 +38,42 @@ public class Provider extends User {
         this.specialization = specialization;
     }
 
+    /**
+     * Provider overloaded constructor.
+     * @param id
+     * @param name
+     * @param email
+     * @param password
+     * @param gender
+     * @param dob
+     * @param address
+     * @param contact
+     * @param specialization
+     * @param experience
+     */
+    public Provider(
+            long id,
+            String name,
+            String email,
+            String password,
+            String gender,
+            String dob,
+            String address,
+            String contact,
+            String specialization,
+            int experience) {
+        this.providerId = id;
+        this.setName(name);
+        this.setEmail(email);
+        this.setPassword(password);
+        this.setGender(gender);
+        this.setDate(dob);
+        this.setAddress(address);
+        this.setContact(contact);
+        this.yearsOfExperience = experience;
+        this.specialization = specialization;
+    }
+
     public long getProviderId() {
         return providerId;
     }

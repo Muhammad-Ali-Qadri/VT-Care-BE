@@ -9,8 +9,20 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import com.google.gson.*;
 
+
+/**
+ * Holds the business APIs for VTCare Application.
+ */
 @Path("/")
 public class VTCareResource {
+    /**
+     * This API creates a provider entity and persists it into the database.
+     * Generates an ID, appends it to the entity and returns.
+     *
+     * @param provider : provider entity being received from the call.
+     * @return the provider entity just persisted with the generated provider Id
+     * @throws Exception
+     */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -21,6 +33,24 @@ public class VTCareResource {
             return providerService.persistProvider(provider);
         } catch(Exception e) {
             throw new Exception("An exception occurred while persisting the provider details.");
+        }
+    }
+
+    /**
+     * Finds and returns the provider with given ID.
+     * @param providerId: Id of the provider to be searched.
+     * @return Matching provider entity.
+     * @throws Exception
+     */
+    @GET
+    @Path("providers/{provider-id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Provider suggestedBooks(@PathParam("provider-id")  long providerId) throws Exception {
+        try {
+            ProviderService providerService = new ProviderService();
+            return providerService.findProviderById(providerId);
+        } catch(Exception e) {
+            throw new Exception("An exception occurred while finding provider details.");
         }
     }
 
