@@ -24,27 +24,32 @@ public class VTCareResource {
         }
     }
 
+    /**
+     *Attempts to log-in the user and returns his ID.
+     * @param loginInfo: JSON string containing email, password, and boolean
+     *                 value representing whether the user is a provider or
+     *                 a patient.
+     * @return Response object, success with user ID, 0 for invalid credentials.
+     * @throws Exception
+     */
     @POST
     @Path("login")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response login(String json) throws Exception {
-        JsonObject o = new Gson().fromJson(json, JsonObject.class);
+    public Response login(String loginInfo) throws Exception {
+        JsonObject keyValueMapping = new Gson().fromJson(loginInfo,
+                JsonObject.class);
+
         try {
-            String email = o.get("email").getAsString();
-            String password = o.get("password").getAsString();
-            boolean isProviderLogin = o.get("isProviderLogin").getAsBoolean();
+            String email = keyValueMapping.get("email").getAsString();
+            String password = keyValueMapping.get("password").getAsString();
+            boolean isProviderLogin = keyValueMapping.get("isProviderLogin").getAsBoolean();
 
             LoginService loginService = new LoginService();
             int id = loginService.login(email, password,
                     isProviderLogin);
 
-            if(id > 0){
-                return Response.ok(id).build();
-            }
-            else {
-                return Response.status(Response.Status.UNAUTHORIZED).build();
-            }
+            return Response.ok(id).build();
         } catch(Exception e) {
             throw new Exception("An exception occurred while logging in.");
         }

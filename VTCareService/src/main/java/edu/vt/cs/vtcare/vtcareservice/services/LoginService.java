@@ -1,13 +1,12 @@
 package edu.vt.cs.vtcare.vtcareservice.services;
 
-import edu.vt.cs.vtcare.vtcareservice.dao.LoginDao;
 import java.sql.SQLException;
 
 public class LoginService {
-    private final LoginDao loginDao;
+    private final edu.vt.cs.vtcare.vtcareservice.dao.LoginService loginService;
 
     public LoginService() throws Exception {
-        loginDao = new LoginDao();
+        loginService = new edu.vt.cs.vtcare.vtcareservice.dao.LoginService();
     }
 
     /**
@@ -20,7 +19,7 @@ public class LoginService {
      */
     public int login(String email, String password,
                                     boolean isProviderLogin) throws SQLException {
-        return loginDao.validateLogin(email, password,
+        return loginService.validateLogin(email, password,
                 isProviderLogin);
     }
 }
