@@ -43,9 +43,11 @@ public class ProviderService {
         try {
             List<Provider> providerList = providerDao.getProviders();
             AppointmentSlotService apptSlotService = new AppointmentSlotService();
+            AppointmentService apptService = new AppointmentService();
             for(Provider doctor : providerList) {
                 List<AppointmentSlot> proAvailSchedule = apptSlotService.getAppointmentList(doctor.getProviderId() );
                 doctor.setAvailabilitySchedule(proAvailSchedule);
+                doctor.setUpcomingAppointments( apptService.getAppointmentList( (int) doctor.getProviderId() ) );
             }
             return providerList;
         } catch (Exception e) {
