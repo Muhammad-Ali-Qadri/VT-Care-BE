@@ -26,8 +26,8 @@ public class ProviderDao {
             "SELECT * FROM providers where id = ?";
 
     private static final String FIND_ALL_PROVIDERS_SQL =
-            "SELECT * " +
-                    "FROM providers";
+            "SELECT * FROM providers";
+
     /**
      * Executes database query to persist the given provider into the database.
      * @param provider provider entity
