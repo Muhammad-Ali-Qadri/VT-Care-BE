@@ -9,6 +9,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import com.google.gson.*;
 
+import java.util.List;
+
 
 /**
  * Holds the business APIs for VTCare Application.
@@ -78,6 +80,24 @@ public class VTCareResource {
             return Response.ok(id).build();
         } catch(Exception e) {
             throw new Exception("An exception occurred while logging in.");
+        }
+    }
+
+    /**
+     *
+     * @return the providers
+     * @throws Exception if cascaded from DAO.
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("providers")
+    public List<Provider> getProviders() throws Exception {
+        try {
+            ProviderService providerService = new ProviderService();
+            return providerService.getProviders();
+        } catch(Exception e) {
+            System.out.println("Issue getting provider(s)");
+            throw e;
         }
     }
 }
