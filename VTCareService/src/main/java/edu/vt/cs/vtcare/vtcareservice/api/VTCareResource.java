@@ -91,7 +91,7 @@ public class VTCareResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("providers")
-    public List<Provider> getProvider() throws Exception {
+    public List<Provider> getProviders() throws Exception {
         try {
             ProviderService providerService = new ProviderService();
             return providerService.getProviders();
