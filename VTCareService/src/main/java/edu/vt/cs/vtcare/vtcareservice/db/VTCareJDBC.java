@@ -20,9 +20,9 @@ public final class VTCareJDBC {
     }
 
     public Connection getConnection() throws Exception {
-        String url = "jdbc:mysql://localhost:3306/vtcare";
+        String url = "jdbc:mysql://localhost:3306/VTCareDB";
         String user = "root";
-        String password = "Rootpw4123!";
+        String password = "Ak@Mysql2022";
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
