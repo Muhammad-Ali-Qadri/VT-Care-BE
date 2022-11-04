@@ -1,40 +1,91 @@
 package edu.vt.cs.vtcare.vtcareservice.models;
 
-import java.sql.Time;
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Appointment {
-    private int id;
+    private long id;
     private int providerId;
     private int patientId;
-
-    private String date;
-    private String time;
     private int duration;
-    private boolean isVideoAppointment;
-    private String url;
-    private String status;
 
-    public Appointment(int id, int providerId, int patientId,
-                       String date,
-                       String time, int duration, boolean isVideo, String url,
-                       String status) {
+    private boolean isVideoAppointment;
+
+    private String providerName;
+    private String providerEmail;
+    private String patientName;
+    private String patientEmail;
+
+    private LocalDate date;
+    private String time;
+    private String url;
+
+    private AppointmentStatus status;
+
+    @JsonCreator
+    public Appointment(@JsonProperty("providerId") int providerId,
+                       @JsonProperty("patientId") int patientId,
+                       @JsonProperty("duration") int duration,
+                       @JsonProperty("isVideoAppointment") boolean isVideoAppointment,
+                       @JsonProperty("providerName") String providerName,
+                       @JsonProperty("providerEmail") String providerEmail,
+                       @JsonProperty("patientName") String patientName,
+                       @JsonProperty("patientEmail") String patientEmail,
+                       @JsonProperty("date") String date,
+                       @JsonProperty("time") String time,
+                       @JsonProperty("url") String url,
+                       @JsonProperty("status") AppointmentStatus status) {
+        this.providerId = providerId;
+        this.patientId = patientId;
+        this.duration = duration;
+        this.isVideoAppointment = isVideoAppointment;
+        this.providerName = providerName;
+        this.providerEmail = providerEmail;
+        this.patientName = patientName;
+        this.patientEmail = patientEmail;
+        this.time = time;
+        this.url = url;
+        this.status = status;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        this.date = LocalDate.parse(date, formatter);
+    }
+
+    public Appointment(long id, int providerId, int patientId, int duration,
+                       boolean isVideoAppointment, String providerName,
+                       String providerEmail, String patientName,
+                       String patientEmail, LocalDate date, String time,
+                       String url, AppointmentStatus status) {
         this.id = id;
         this.providerId = providerId;
         this.patientId = patientId;
+        this.duration = duration;
+        this.isVideoAppointment = isVideoAppointment;
+        this.providerName = providerName;
+        this.providerEmail = providerEmail;
+        this.patientName = patientName;
+        this.patientEmail = patientEmail;
         this.date = date;
         this.time = time;
-        this.duration = duration;
-        this.isVideoAppointment = isVideo;
         this.url = url;
         this.status = status;
     }
 
-    public int getId() {
+    @JsonIgnore()
+    public String getDateTimeString(){
+        return date + "T" + time + "Z";
+    }
+
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -54,11 +105,59 @@ public class Appointment {
         this.patientId = patientId;
     }
 
-    public String getDate() {
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public boolean isVideoAppointment() {
+        return isVideoAppointment;
+    }
+
+    public void setVideoAppointment(boolean videoAppointment) {
+        isVideoAppointment = videoAppointment;
+    }
+
+    public String getProviderName() {
+        return providerName;
+    }
+
+    public void setProviderName(String providerName) {
+        this.providerName = providerName;
+    }
+
+    public String getProviderEmail() {
+        return providerEmail;
+    }
+
+    public void setProviderEmail(String providerEmail) {
+        this.providerEmail = providerEmail;
+    }
+
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
+    public String getPatientEmail() {
+        return patientEmail;
+    }
+
+    public void setPatientEmail(String patientEmail) {
+        this.patientEmail = patientEmail;
+    }
+
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -70,22 +169,6 @@ public class Appointment {
         this.time = time;
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public boolean getIsVideoAppointment() {
-        return isVideoAppointment;
-    }
-
-    public void setIsVideoAppointment(boolean video) {
-        isVideoAppointment = video;
-    }
-
     public String getUrl() {
         return url;
     }
@@ -94,12 +177,11 @@ public class Appointment {
         this.url = url;
     }
 
-    public String getStatus() {
+    public AppointmentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(AppointmentStatus status) {
         this.status = status;
     }
-
 }

@@ -1,6 +1,8 @@
 package edu.vt.cs.vtcare.vtcareservice.api;
 
+import edu.vt.cs.vtcare.vtcareservice.models.Appointment;
 import edu.vt.cs.vtcare.vtcareservice.models.Provider;
+import edu.vt.cs.vtcare.vtcareservice.services.AppointmentService;
 import edu.vt.cs.vtcare.vtcareservice.services.LoginService;
 import edu.vt.cs.vtcare.vtcareservice.services.ProviderService;
 
@@ -80,6 +82,29 @@ public class VTCareResource {
             return Response.ok(id).build();
         } catch(Exception e) {
             throw new Exception("An exception occurred while logging in.");
+        }
+    }
+
+    /**
+     *Schedule an appointment with the provided information.
+     * @param appointment: the appointment object containing information for
+     *                   booking.
+     * @return Appointment Object with ids and URLs.
+     * @throws Exception
+     */
+    @POST
+    @Path("scheduleappointment")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response scheduleAppointment(Appointment appointment) throws Exception {
+        try {
+            AppointmentService appointmentService = new AppointmentService();
+            appointment = appointmentService.scheduleAppointment(appointment);
+
+            return Response.ok(appointment).build();
+        } catch(Exception e) {
+            throw new Exception("An exception occurred while scheduling an " +
+                                "appointment");
         }
     }
 
