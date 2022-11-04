@@ -11,6 +11,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import com.google.gson.*;
 
+import java.util.List;
+
 
 /**
  * Holds the business APIs for VTCare Application.
@@ -83,7 +85,6 @@ public class VTCareResource {
         }
     }
 
-
     /**
      *Schedule an appointment with the provided information.
      * @param appointment: the appointment object containing information for
@@ -104,6 +105,24 @@ public class VTCareResource {
         } catch(Exception e) {
             throw new Exception("An exception occurred while scheduling an " +
                                 "appointment");
+        }
+    }
+
+    /**
+     *
+     * @return the providers
+     * @throws Exception if cascaded from DAO.
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("providers")
+    public List<Provider> getProviders() throws Exception {
+        try {
+            ProviderService providerService = new ProviderService();
+            return providerService.getProviders();
+        } catch(Exception e) {
+            System.out.println("Issue getting provider(s)");
+            throw e;
         }
     }
 }

@@ -7,7 +7,7 @@ import edu.vt.cs.vtcare.vtcareservice.dao.AppointmentDao;
 import edu.vt.cs.vtcare.vtcareservice.models.Appointment;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import java.util.List;
 
 public class AppointmentService {
     private final AppointmentDao appointmentDao;
@@ -39,5 +39,14 @@ public class AppointmentService {
         MeetingService meetingService = new ZoomMeetingService();
 
         return meetingService.createMeeting(meetingDetails);
+    }
+
+    public List<Appointment> getAppointmentList(int providerId) throws Exception {
+        try {
+            return appointmentDao.getAppointmentsById(providerId);
+        } catch (Exception e) {
+            System.out.println("Fetching providers list, had an issue.");
+            throw e;
+        }
     }
 }

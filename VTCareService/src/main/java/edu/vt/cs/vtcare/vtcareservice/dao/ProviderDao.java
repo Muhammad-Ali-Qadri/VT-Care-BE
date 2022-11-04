@@ -4,6 +4,8 @@ import edu.vt.cs.vtcare.vtcareservice.db.VTCareJDBC;
 import edu.vt.cs.vtcare.vtcareservice.models.Provider;
 
 import java.sql.*;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Holds the code that interacts with the database and performs CRUD operations on
@@ -22,6 +24,9 @@ public class ProviderDao {
 
     private static final String FIND_PROVIDER_BY_ID_SQL =
             "SELECT * FROM providers where id = ?";
+
+    private static final String FIND_ALL_PROVIDERS_SQL =
+            "SELECT * FROM providers";
 
     /**
      * Executes database query to persist the given provider into the database.
@@ -92,5 +97,26 @@ public class ProviderDao {
         int experience = resultSet.getInt("experience");
 
         return new Provider(id, name, email, password, gender, dob, address, contact, specialization, experience);
+    }
+
+    /**
+     *
+     * @return ListOfAllProviders
+     * @throws SQLException When query is malformed, or other SQL related issues.
+     */
+    public List<Provider> getProviders() throws SQLException{
+        try (PreparedStatement statement = connection.prepareStatement(FIND_ALL_PROVIDERS_SQL)) {
+
+            ResultSet res = statement.executeQuery();
+            List<Provider> providers = new ArrayList<>();
+
+            while(res.next() ){
+                providers.add( parseProvider(res) );
+            }
+            return providers;
+        } catch (SQLException e) {
+            System.out.println(e.getStackTrace() );
+            throw e;
+        }
     }
 }
