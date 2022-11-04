@@ -2,14 +2,15 @@ package edu.vt.cs.vtcare.vtcareservice.dao;
 
 import edu.vt.cs.vtcare.vtcareservice.db.VTCareJDBC;
 import edu.vt.cs.vtcare.vtcareservice.models.Appointment;
+import edu.vt.cs.vtcare.vtcareservice.models.AppointmentStatus;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
-import java.time.ZoneId;
 
 public class AppointmentDao {
-    private Connection connection;
+    private final Connection connection;
 
     public AppointmentDao() throws Exception {
         connection = VTCareJDBC.getInstance().getConnection();
@@ -18,7 +19,7 @@ public class AppointmentDao {
     private static final String CREATE_APPOINTMENT_SQL =
             "INSERT INTO appointments (provider_id, patient_id, date, " +
             "time, duration, is_video_appt, url, status)" +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
     private static final String FIND_APPOINTMENTS_BY_PROVIDER =
             "SELECT * " +
@@ -38,8 +39,7 @@ public class AppointmentDao {
             statement.setInt(1, appointment.getProviderId());
             statement.setInt(2, appointment.getPatientId());
             statement.setDate(3,
-                    java.sql.Date.valueOf(appointment.getDate().toInstant().
-                            atZone(ZoneId.systemDefault()).toLocalDate()));
+                    java.sql.Date.valueOf(appointment.getDate()));
             statement.setString(4, appointment.getTime());
             statement.setInt(5, appointment.getDuration());
             statement.setBoolean(6, appointment.isVideoAppointment());
@@ -80,13 +80,15 @@ public class AppointmentDao {
         int id = resultSet.getInt("id");
         int providerId = resultSet.getInt("provider_id");
         int patientId = resultSet.getInt("patient_id");
-        String date = resultSet.getDate("date").toString();
+        LocalDate date = resultSet.getDate("date").toLocalDate();
         String time = resultSet.getTime("time").toString();
         int duration = resultSet.getInt("duration");
-        boolean is_video = resultSet.getBoolean("is_video_appt");
+        boolean isVideo = resultSet.getBoolean("is_video_appt");
         String url = resultSet.getString("url");
         String status = resultSet.getString("status");
 
-        return new Appointment(id, providerId, patientId, date, time, duration, is_video, url, status);
+        return new Appointment(id, providerId, patientId, duration, isVideo,
+                "", "", "", "",
+                date, time, url, AppointmentStatus.valueOf(status));
     }
 }

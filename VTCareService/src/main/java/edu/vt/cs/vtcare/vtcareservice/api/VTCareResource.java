@@ -89,7 +89,7 @@ public class VTCareResource {
      *Schedule an appointment with the provided information.
      * @param appointment: the appointment object containing information for
      *                   booking.
-     * @return Appointment ID.
+     * @return Appointment Object with ids and URLs.
      * @throws Exception
      */
     @POST

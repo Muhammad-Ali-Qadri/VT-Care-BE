@@ -1,14 +1,12 @@
 package edu.vt.cs.vtcare.vtcareservice.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
-import java.util.Date;
-import java.util.Locale;
 
 public class Appointment {
     private long id;
@@ -22,7 +20,8 @@ public class Appointment {
     private String providerEmail;
     private String patientName;
     private String patientEmail;
-    private Date date;
+
+    private LocalDate date;
     private String time;
     private String url;
 
@@ -53,19 +52,14 @@ public class Appointment {
         this.url = url;
         this.status = status;
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        try{
-            this.date = formatter.parse(date);
-        }
-        catch (Exception e){
-            System.out.println(e);
-        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        this.date = LocalDate.parse(date, formatter);
     }
 
     public Appointment(long id, int providerId, int patientId, int duration,
                        boolean isVideoAppointment, String providerName,
                        String providerEmail, String patientName,
-                       String patientEmail, Date date, String time,
+                       String patientEmail, LocalDate date, String time,
                        String url, AppointmentStatus status) {
         this.id = id;
         this.providerId = providerId;
@@ -82,9 +76,9 @@ public class Appointment {
         this.status = status;
     }
 
+    @JsonIgnore()
     public String getDateTimeString(){
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        return formatter.format(date) + "T" + time + "Z";
+        return date + "T" + time + "Z";
     }
 
     public long getId() {
@@ -159,11 +153,11 @@ public class Appointment {
         this.patientEmail = patientEmail;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
