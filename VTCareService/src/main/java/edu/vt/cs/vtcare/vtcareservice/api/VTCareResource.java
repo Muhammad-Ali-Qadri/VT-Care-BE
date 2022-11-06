@@ -1,9 +1,11 @@
 package edu.vt.cs.vtcare.vtcareservice.api;
 
 import edu.vt.cs.vtcare.vtcareservice.models.Appointment;
+import edu.vt.cs.vtcare.vtcareservice.models.Patient;
 import edu.vt.cs.vtcare.vtcareservice.models.Provider;
 import edu.vt.cs.vtcare.vtcareservice.services.AppointmentService;
 import edu.vt.cs.vtcare.vtcareservice.services.LoginService;
+import edu.vt.cs.vtcare.vtcareservice.services.PatientService;
 import edu.vt.cs.vtcare.vtcareservice.services.ProviderService;
 
 import javax.ws.rs.*;
@@ -124,5 +126,40 @@ public class VTCareResource {
             System.out.println("Issue getting provider(s)");
             throw e;
         }
+    }
+
+    /**
+     * This API creates a patient entity and persists it into the database.
+     * Generates an ID, appends it to the entity and returns.
+     *
+     * @param patient : patient entity being received from the call.
+     * @return the patient entity just persisted with the generated patient Id
+     * @throws Exception
+     */
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("patients")
+    public Patient createPatient (Patient patient) throws Exception {
+        try {
+            PatientService patientService = new PatientService();
+            return patientService.persistPatient(patient);
+        } catch(Exception e) {
+            throw new Exception("An exception occurred while persisting the patient details.");
+        }
+    }
+
+    /**
+     * Finds and returns the patient with given ID.
+     * @param patientId: Id of the patient to be searched.
+     * @return Matching patient entity.
+     * @throws Exception
+     */
+    @GET
+    @Path("patients/{patient-id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Patient getPatient(@PathParam("patient-id")  long patientId) throws Exception {
+        PatientService patientService = new PatientService();
+        return patientService.findPatientById(patientId);
     }
 }

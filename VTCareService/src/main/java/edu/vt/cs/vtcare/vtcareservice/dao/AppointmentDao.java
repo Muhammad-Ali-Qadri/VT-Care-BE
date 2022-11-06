@@ -25,6 +25,10 @@ public class AppointmentDao {
             "SELECT * " +
             "FROM appointments where provider_id = ? order by date, time;";
 
+    private static final String FIND_APPOINTMENTS_BY_PATIENT =
+            "SELECT * " +
+                    "FROM appointments where patient_id = ? order by date, time;";
+
     /**
      * Executes database query to persist the given appointment into the
      * database.
@@ -70,6 +74,28 @@ public class AppointmentDao {
                 appointmentSlotList.add(parseAppointments(res));
             }
             return appointmentSlotList;
+        } catch (SQLException e) {
+            System.out.println(e.getStackTrace());
+            throw e;
+        }
+    }
+
+    /**
+     * Fetches appointments for a given patient Id.
+     * @param patientId
+     * @return
+     * @throws SQLException
+     */
+    public List<Appointment> getAppointmentsByPatientId(long patientId) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(FIND_APPOINTMENTS_BY_PATIENT)) {
+            statement.setLong(1, patientId);
+            ResultSet res = statement.executeQuery();
+            List<Appointment> appointmentList = new ArrayList<>();
+
+            while (res.next()) {
+                appointmentList.add(parseAppointments(res));
+            }
+            return appointmentList;
         } catch (SQLException e) {
             System.out.println(e.getStackTrace());
             throw e;
