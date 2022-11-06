@@ -49,4 +49,19 @@ public class AppointmentService {
             throw e;
         }
     }
+
+    /**
+     * fetches the list of appointments for given patient id
+     * @param patientId
+     * @return
+     * @throws Exception
+     */
+    public List<Appointment> getAppointmentListByPatientId(long patientId) throws Exception {
+        try {
+            return appointmentDao.getAppointmentsByPatientId(patientId);
+        } catch (Exception e) {
+            System.out.println("Encountered an issue while fetching upcoming appointments for patient.");
+            throw e;
+        }
+    }
 }
