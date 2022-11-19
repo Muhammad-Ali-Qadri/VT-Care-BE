@@ -32,7 +32,7 @@ public class Patient extends User {
         this.setEmail(email);
         this.setPassword(password);
         this.setGender(gender);
-        this.setDate(dob);
+        this.setDateOfBirth(dob);
         this.setAddress(address);
         this.setContact(contact);
         this.employer = employer;
@@ -66,7 +66,7 @@ public class Patient extends User {
         this.setEmail(email);
         this.setPassword(password);
         this.setGender(gender);
-        this.setDate(dob);
+        this.setDateOfBirth(dob);
         this.setAddress(address);
         this.setContact(contact);
         this.id = id;

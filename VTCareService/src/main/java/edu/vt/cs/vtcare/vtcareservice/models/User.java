@@ -43,11 +43,11 @@ public class User {
         this.gender = gender;
     }
 
-    public String getDate() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDate(String date) {
+    public void setDateOfBirth(String date) {
         this.dateOfBirth = date;
     }
 

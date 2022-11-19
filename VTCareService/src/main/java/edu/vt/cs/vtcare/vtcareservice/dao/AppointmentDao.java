@@ -19,7 +19,12 @@ public class AppointmentDao {
     private static final String CREATE_APPOINTMENT_SQL =
             "INSERT INTO appointments (provider_id, patient_id, date, " +
             "time, duration, is_video_appt, url, status)" +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+            "SELECT ?, ?, ?, ?, ?, ?, ?, ?" +
+            "WHERE NOT EXISTS (SELECT 1 FROM appointments WHERE provider_id =" +
+            " " +
+            "? AND date = ? AND time = ?) AND NOT EXISTS (SELECT 1 " +
+            "FROM appointments WHERE patient_id = ? AND date = ? AND " +
+            "time = ?)";
 
     private static final String FIND_APPOINTMENTS_BY_PROVIDER =
             "SELECT * " +
@@ -49,6 +54,15 @@ public class AppointmentDao {
             statement.setBoolean(6, appointment.isVideoAppointment());
             statement.setString(7, appointment.getUrl());
             statement.setString(8, appointment.getStatus().toString());
+            statement.setInt(9, appointment.getProviderId());
+            statement.setDate(10,
+                    java.sql.Date.valueOf(appointment.getDate()));
+            statement.setString(11, appointment.getTime());
+            statement.setInt(12, appointment.getPatientId());
+            statement.setDate(13,
+                    java.sql.Date.valueOf(appointment.getDate()));
+            statement.setString(14, appointment.getTime());
+
             statement.executeUpdate();
 
             ResultSet rs = statement.getGeneratedKeys();
