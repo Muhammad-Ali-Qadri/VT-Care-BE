@@ -20,7 +20,7 @@ public class Provider extends User {
                     @JsonProperty("email") String email,
                     @JsonProperty("password") String password,
                     @JsonProperty("gender") String gender,
-                    @JsonProperty("dob") String dob,
+                    @JsonProperty("dateOfBirth") String dob,
                     @JsonProperty("address") String address,
                     @JsonProperty("contact") String contact,
                     @JsonProperty("experience") int experience,
@@ -29,7 +29,7 @@ public class Provider extends User {
         this.setEmail(email);
         this.setPassword(password);
         this.setGender(gender);
-        this.setDate(dob);
+        this.setDateOfBirth(dob);
         this.setAddress(address);
         this.setContact(contact);
         this.yearsOfExperience = experience;
@@ -65,7 +65,7 @@ public class Provider extends User {
         this.setEmail(email);
         this.setPassword(password);
         this.setGender(gender);
-        this.setDate(dob);
+        this.setDateOfBirth(dob);
         this.setAddress(address);
         this.setContact(contact);
         this.yearsOfExperience = experience;

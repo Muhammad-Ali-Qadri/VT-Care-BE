@@ -41,7 +41,7 @@ public class ProviderDao {
             statement.setString(2, provider.getEmail());
             statement.setString(3, provider.getPassword());
             statement.setString(4, provider.getGender());
-            statement.setDate(5, java.sql.Date.valueOf(provider.getDate()));
+            statement.setDate(5, java.sql.Date.valueOf(provider.getDateOfBirth()));
             statement.setString(6, provider.getAddress());
             statement.setString(7, provider.getContact());
             statement.setString(8, provider.getSpecialization());

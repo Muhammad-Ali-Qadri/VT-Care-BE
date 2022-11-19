@@ -37,7 +37,7 @@ public class PatientDao {
             statement.setString(2, patient.getEmail());
             statement.setString(3, patient.getPassword());
             statement.setString(4, patient.getGender());
-            statement.setDate(5, java.sql.Date.valueOf(patient.getDate()));
+            statement.setDate(5, java.sql.Date.valueOf(patient.getDateOfBirth()));
             statement.setString(6, patient.getAddress());
             statement.setString(7, patient.getContact());
             statement.setString(8, patient.getEmployer());
