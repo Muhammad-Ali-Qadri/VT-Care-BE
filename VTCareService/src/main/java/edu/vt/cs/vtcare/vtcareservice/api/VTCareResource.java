@@ -2,11 +2,9 @@ package edu.vt.cs.vtcare.vtcareservice.api;
 
 import edu.vt.cs.vtcare.vtcareservice.models.Appointment;
 import edu.vt.cs.vtcare.vtcareservice.models.Patient;
+import edu.vt.cs.vtcare.vtcareservice.models.PatientVisitHistory;
 import edu.vt.cs.vtcare.vtcareservice.models.Provider;
-import edu.vt.cs.vtcare.vtcareservice.services.AppointmentService;
-import edu.vt.cs.vtcare.vtcareservice.services.LoginService;
-import edu.vt.cs.vtcare.vtcareservice.services.PatientService;
-import edu.vt.cs.vtcare.vtcareservice.services.ProviderService;
+import edu.vt.cs.vtcare.vtcareservice.services.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -146,6 +144,27 @@ public class VTCareResource {
             return patientService.persistPatient(patient);
         } catch(Exception e) {
             throw new Exception("An exception occurred while persisting the patient details.");
+        }
+    }
+
+    /**
+     *
+     * Adds the supplied patient visit history to the patients history table.
+     *
+     * @param patientVisitHistory
+     * @return
+     * @throws Exception
+     */
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("patients/addHistory")
+    public PatientVisitHistory addPatientHistory (PatientVisitHistory patientVisitHistory) throws Exception {
+        try {
+            PatientVisitHistoryService patienthistoryService = new PatientVisitHistoryService();
+            return patienthistoryService.persistPatientHistory(patientVisitHistory);
+        } catch(Exception e) {
+            throw new Exception("An exception occurred while persisting the patient history.");
         }
     }
 

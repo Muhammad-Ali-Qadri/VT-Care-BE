@@ -25,4 +25,15 @@ public class PatientVisitHistoryService {
     public List<PatientVisitHistory> findHistoryByPatientId(long patientId) throws SQLException {
         return patientVisitHistoryDao.findHistoryByPatientId(patientId);
     }
+
+    /**
+     * Persists patient's history into the database.
+     * @param patientVisitHistory
+     * @return
+     */
+    public PatientVisitHistory persistPatientHistory(PatientVisitHistory patientVisitHistory) {
+        long historyId =  patientVisitHistoryDao.persistPatientHistory(patientVisitHistory);
+        patientVisitHistory.setId(historyId);
+        return patientVisitHistory;
+    }
 }

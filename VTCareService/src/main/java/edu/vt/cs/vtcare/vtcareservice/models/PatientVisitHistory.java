@@ -1,5 +1,8 @@
 package edu.vt.cs.vtcare.vtcareservice.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Encapsulates a single patient visit history.
  *
@@ -16,6 +19,21 @@ public class PatientVisitHistory {
 
     public PatientVisitHistory(long id, long patientId, String apptDate, String providerName, String diagnosis, String prescription, String notes) {
         this.id = id;
+        this.patientId = patientId;
+        this.apptDate = apptDate;
+        this.providerName = providerName;
+        this.diagnosis = diagnosis;
+        this.prescription = prescription;
+        this.notes = notes;
+    }
+
+    @JsonCreator
+    public PatientVisitHistory(@JsonProperty("patientId") long patientId,
+                   @JsonProperty("apptDate") String apptDate,
+                   @JsonProperty("providerName") String providerName,
+                   @JsonProperty("diagnosis") String diagnosis,
+                   @JsonProperty("prescription") String prescription,
+                   @JsonProperty("notes") String notes) {
         this.patientId = patientId;
         this.apptDate = apptDate;
         this.providerName = providerName;
