@@ -28,6 +28,9 @@ public class ProviderDao {
     private static final String FIND_ALL_PROVIDERS_SQL =
             "SELECT * FROM providers";
 
+    private static final String SEARCH_PROVIDERS_SQL =
+            "select * from providers where name like ? AND address like ? AND specialization like ? AND gender like ?";
+
     /**
      * Executes database query to persist the given provider into the database.
      * @param provider provider entity
@@ -118,5 +121,41 @@ public class ProviderDao {
             System.out.println(e.getStackTrace() );
             throw e;
         }
+    }
+
+    /**
+     *
+     * Searches providers by the specified parameters.
+     *
+     * @param name
+     * @param gender
+     * @param specialization
+     * @param location
+     * @return
+     */
+    public List<Provider> searchProviders(String name, String gender, String specialization, String location) {
+
+        //Sanitizing query params for performing query
+        name = name == null ? "" : name.trim();
+        gender = gender == null ? "" : gender.trim();
+        specialization = specialization == null ? "" : specialization.trim();
+        location = location == null ? "" : location.trim();
+
+        List<Provider> providerList = new ArrayList<Provider>();
+        try (PreparedStatement statement = connection.prepareStatement(SEARCH_PROVIDERS_SQL)) {
+            statement.setString(1, "%" + name + "%");
+            statement.setString(2, "%" + location + "%");
+            statement.setString(3, "%" + specialization + "%");
+            statement.setString(4, "%" + gender + "%");
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    providerList.add(parseProvider(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Encountered problem while searching providers" + e);
+        }
+
+        return  providerList;
     }
 }
