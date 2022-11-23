@@ -162,4 +162,26 @@ public class VTCareResource {
         PatientService patientService = new PatientService();
         return patientService.findPatientById(patientId);
     }
+
+    /**
+     * Searches providers based on the provided parameters.
+     *
+     * @return the providers
+     * @throws Exception if cascaded from DAO.
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("searchproviders")
+    public List<Provider> searchProviders(@QueryParam("name")  String name,
+                                          @QueryParam("gender")  String gender,
+                                          @QueryParam("specialization")  String specialization,
+                                          @QueryParam("location")  String location) throws Exception {
+        try {
+            ProviderService providerService = new ProviderService();
+            return providerService.searchProviders(name, gender, specialization, location);
+        } catch(Exception e) {
+            System.out.println("An exception occurred while searching provider(s)");
+            throw e;
+        }
+    }
 }
