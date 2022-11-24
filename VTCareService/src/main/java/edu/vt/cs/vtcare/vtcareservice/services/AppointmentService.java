@@ -5,6 +5,7 @@ import edu.vt.cs.vtcare.meetingservices.models.MeetingDetails;
 import edu.vt.cs.vtcare.meetingservices.services.ZoomMeetingService;
 import edu.vt.cs.vtcare.vtcareservice.dao.AppointmentDao;
 import edu.vt.cs.vtcare.vtcareservice.models.Appointment;
+import edu.vt.cs.vtcare.vtcareservice.models.Patient;
 
 import java.io.IOException;
 import java.util.List;

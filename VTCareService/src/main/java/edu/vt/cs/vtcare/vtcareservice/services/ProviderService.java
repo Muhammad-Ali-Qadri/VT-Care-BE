@@ -35,8 +35,15 @@ public class ProviderService {
      * @param providerId id of the provider to be found.
      * @return the matching Provider from the database.
      */
-    public Provider findProviderById(long providerId) {
-        return providerDao.findProviderById(providerId);
+    public Provider findProviderById(long providerId) throws Exception{
+        Provider provider = providerDao.findProviderById(providerId);
+        AppointmentSlotService apptSlotService = new AppointmentSlotService();
+        AppointmentService apptService = new AppointmentService();
+        List<AppointmentSlot> proAvailSchedule = apptSlotService.getAppointmentList(provider.getProviderId() );
+        provider.setAvailabilitySchedule(proAvailSchedule);
+        provider.setUpcomingAppointments( apptService.getAppointmentList( (int) provider.getProviderId() ) );
+
+        return provider;
     }
 
     public List<Provider> getProviders() throws Exception {
