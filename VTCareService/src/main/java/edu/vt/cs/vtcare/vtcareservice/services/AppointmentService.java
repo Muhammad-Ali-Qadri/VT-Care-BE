@@ -30,7 +30,7 @@ public class AppointmentService {
     }
 
     private String getMeetingUrl(Appointment appointment) throws IOException {
-        String agenda = String.format("Meeting for %s, with doctor %s",
+        String agenda = String.format("Meeting for %s, with Dr. %s",
                 appointment.getPatientName(), appointment.getProviderName());
 
         MeetingDetails meetingDetails = new MeetingDetails(agenda,

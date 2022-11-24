@@ -78,7 +78,7 @@ public class Appointment {
 
     @JsonIgnore()
     public String getDateTimeString(){
-        return date + "T" + time + "Z";
+        return date + "T" + time + ":00";
     }
 
     public long getId() {

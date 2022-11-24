@@ -22,6 +22,10 @@ public class ZoomMeetingSettings {
     private boolean host_save_video_order;
     private boolean alternative_host_update_polls;
 
+    private boolean participant_video;
+    private boolean waiting_room;
+
+
     private String authentication_domains;
 
     private final List<ZoomAuthenticationException> authentication_exception;
@@ -37,6 +41,7 @@ public class ZoomMeetingSettings {
         this.alternative_hosts_email_notification = true;
         this.email_notification = true;
         this.host_video = true;
+        this.participant_video = true;
         this.meeting_authentication = false;
         this.join_before_host = true;
         this.registrants_confirmation_email = true;
@@ -44,6 +49,7 @@ public class ZoomMeetingSettings {
         this.show_share_button = true;
         this.host_save_video_order = true;
         this.alternative_host_update_polls = true;
+        this.waiting_room = false;
 
         authentication_exception = new ArrayList<>();
         meeting_invitees = new ArrayList<>();
@@ -125,6 +131,14 @@ public class ZoomMeetingSettings {
         this.host_video = host_video;
     }
 
+    public boolean isParticipant_video() {
+        return participant_video;
+    }
+
+    public void setParticipant_video(boolean participant_video) {
+        this.participant_video = participant_video;
+    }
+
     public boolean isMeeting_authentication() {
         return meeting_authentication;
     }
@@ -179,5 +193,13 @@ public class ZoomMeetingSettings {
 
     public void setAlternative_host_update_polls(boolean alternative_host_update_polls) {
         this.alternative_host_update_polls = alternative_host_update_polls;
+    }
+
+    public boolean isWaiting_room() {
+        return waiting_room;
+    }
+
+    public void setWaiting_room(boolean waiting_room) {
+        this.waiting_room = waiting_room;
     }
 }

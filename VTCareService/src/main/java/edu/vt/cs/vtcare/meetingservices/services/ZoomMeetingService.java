@@ -48,10 +48,11 @@ public class ZoomMeetingService implements MeetingService {
     private ZoomMeetingDTO createZoomDTO(MeetingDetails details){
         ZoomMeetingSettings settings = new ZoomMeetingSettings();
         settings.addAttendant(details.getPatientEmail(), details.getPatientName());
+        settings.addAttendant(details.getProviderEmail(), details.getProviderName());
 
         return new ZoomMeetingDTO(details.getAgenda(), details.getAgenda(),
                 details.getDuration(), details.getPassword(),
-                details.getScheduleTime(), TimeZone.getDefault().getDisplayName(),
+                details.getScheduleDate(), TimeZone.getDefault().getID(),
                 settings);
     }
 }
