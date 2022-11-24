@@ -1,9 +1,6 @@
 package edu.vt.cs.vtcare.vtcareservice.api;
 
-import edu.vt.cs.vtcare.vtcareservice.models.Appointment;
-import edu.vt.cs.vtcare.vtcareservice.models.Patient;
-import edu.vt.cs.vtcare.vtcareservice.models.PatientVisitHistory;
-import edu.vt.cs.vtcare.vtcareservice.models.Provider;
+import edu.vt.cs.vtcare.vtcareservice.models.*;
 import edu.vt.cs.vtcare.vtcareservice.services.*;
 
 import javax.ws.rs.*;
@@ -202,5 +199,60 @@ public class VTCareResource {
             System.out.println("An exception occurred while searching provider(s)");
             throw e;
         }
+    }
+
+    /**
+     * Update appointment status.
+     * @param id id of appointment to change the status
+     * @param status updated status
+     *
+     */
+    @PATCH
+    @Path("appointments/{appointment-id}/updatestatus")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateAppointmentStatus(@PathParam("appointment-id") long id,
+                                            AppointmentStatus status) throws Exception {
+        try {
+            AppointmentService appointmentService = new AppointmentService();
+            appointmentService.updateAppointmentStatus(id, status);
+
+            return Response.ok().build();
+        } catch(Exception e) {
+            throw new Exception("An exception occurred while updating " +
+                                "appointment status.");
+        }
+    }
+
+    /**
+     * Gets a particular patients appointments.
+     * @param patientId: Id of the patient to be searched.
+     * @return Matching patient appointments.
+     * @throws Exception
+     */
+    @GET
+    @Path("patients/{patient-id}/appointments")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPatientAppointments(@PathParam("patient-id")
+                                                   long patientId) throws Exception {
+        AppointmentService apptService = new AppointmentService();
+        return Response.ok(apptService.getAppointmentListByPatientId(patientId))
+                .build();
+    }
+
+    /**
+     * Gets a particular providers appointments.
+     * @param providerId: Id of the patient to be searched.
+     * @return Matching provider appointments.
+     * @throws Exception
+     */
+    @GET
+    @Path("providers/{provider-id}/appointments")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProviderAppointments(@PathParam("provider-id")
+                                                   int providerId) throws Exception {
+        AppointmentService apptService = new AppointmentService();
+        return Response.ok(apptService.getAppointmentList(providerId))
+                .build();
     }
 }
