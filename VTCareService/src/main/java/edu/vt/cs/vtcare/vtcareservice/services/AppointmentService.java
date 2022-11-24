@@ -2,6 +2,7 @@ package edu.vt.cs.vtcare.vtcareservice.services;
 
 import edu.vt.cs.vtcare.meetingservices.MeetingService;
 import edu.vt.cs.vtcare.meetingservices.models.MeetingDetails;
+import edu.vt.cs.vtcare.meetingservices.models.MeetingResponse;
 import edu.vt.cs.vtcare.meetingservices.services.ZoomMeetingService;
 import edu.vt.cs.vtcare.vtcareservice.dao.AppointmentDao;
 import edu.vt.cs.vtcare.vtcareservice.models.Appointment;
@@ -24,12 +25,14 @@ public class AppointmentService {
      *
      */
     public Appointment scheduleAppointment(Appointment appointment) throws IOException {
-        appointment.setUrl(getMeetingUrl(appointment));
+        MeetingResponse res = getMeetingResponse(appointment);
+        appointment.setUrl(res.getUrl());
+        appointment.setExternalId(res.getId());
         appointment.setId(appointmentDao.persistAppointment(appointment));
         return appointment;
     }
 
-    private String getMeetingUrl(Appointment appointment) throws IOException {
+    private MeetingResponse getMeetingResponse(Appointment appointment) throws IOException {
         String agenda = String.format("Meeting for %s, with Dr. %s",
                 appointment.getPatientName(), appointment.getProviderName());
 

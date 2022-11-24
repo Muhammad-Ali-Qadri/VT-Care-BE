@@ -24,6 +24,7 @@ public class Appointment {
     private LocalDate date;
     private String time;
     private String url;
+    private String externalId;
 
     private AppointmentStatus status;
 
@@ -60,7 +61,7 @@ public class Appointment {
                        boolean isVideoAppointment, String providerName,
                        String providerEmail, String patientName,
                        String patientEmail, LocalDate date, String time,
-                       String url, AppointmentStatus status) {
+                       String url, String externalId, AppointmentStatus status) {
         this.id = id;
         this.providerId = providerId;
         this.patientId = patientId;
@@ -73,6 +74,7 @@ public class Appointment {
         this.date = date;
         this.time = time;
         this.url = url;
+        this.externalId = externalId;
         this.status = status;
     }
 
@@ -175,6 +177,14 @@ public class Appointment {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     public AppointmentStatus getStatus() {

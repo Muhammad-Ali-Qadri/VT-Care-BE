@@ -27,7 +27,7 @@ public class ZoomMeetingService implements MeetingService {
     }
 
     @Override
-    public String createMeeting(MeetingDetails details) throws IOException {
+    public MeetingResponse createMeeting(MeetingDetails details) throws IOException {
         ZoomMeetingDTO zoomMeetingDTO = createZoomDTO(details);
         Gson gson = new Gson();
 
@@ -42,7 +42,10 @@ public class ZoomMeetingService implements MeetingService {
                 gson.toJson(zoomMeetingDTO),
                 headers);
 
-        return gson.fromJson(response, ZoomMeetingResponse.class).getJoin_url();
+        ZoomMeetingResponse res = gson.fromJson(response,
+                ZoomMeetingResponse.class);
+
+        return new MeetingResponse(res.getId(), res.getJoin_url());
     }
 
     private ZoomMeetingDTO createZoomDTO(MeetingDetails details){
