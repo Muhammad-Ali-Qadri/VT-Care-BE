@@ -27,12 +27,25 @@ public class AppointmentDao {
             "time = ?)";
 
     private static final String FIND_APPOINTMENTS_BY_PROVIDER =
-            "SELECT * " +
-            "FROM appointments where provider_id = ? order by date, time;";
+            "SELECT appt.*, pt.name 'patient_name', pt.email 'patient_email'," +
+            " pr.name 'provider_name', pr.email 'provider_email'" +
+            " FROM (appointments appt INNER JOIN patients pt ON pt.id = appt" +
+            ".patient_id)" +
+            " INNER JOIN providers pr ON pr.id = appt.provider_id" +
+            " WHERE appt.provider_id = ? ORDER BY date desc, time desc;";
 
     private static final String FIND_APPOINTMENTS_BY_PATIENT =
-            "SELECT * " +
-                    "FROM appointments where patient_id = ? order by date, time;";
+            "SELECT appt.*, pt.name 'patient_name', pt.email 'patient_email'," +
+            " pr.name 'provider_name', pr.email 'provider_email'" +
+            " FROM (appointments appt INNER JOIN patients pt ON pt.id = appt" +
+            ".patient_id)" +
+            " INNER JOIN providers pr ON pr.id = appt.provider_id" +
+            " WHERE appt.patient_id = ? ORDER BY date desc, time desc;";
+
+    private static final String UPDATE_APPOINTMENT_STATUS =
+            "UPDATE appointments " +
+            "SET status = ? " +
+            "WHERE id = ?;";
 
     /**
      * Executes database query to persist the given appointment into the
@@ -116,6 +129,24 @@ public class AppointmentDao {
         }
     }
 
+    /**
+     * Update appointment status.
+     * @param id id of appointment to change the status
+     * @param status updated status
+     * @return
+     * @throws SQLException
+     */
+    public void updateAppointmentStatus(long id, AppointmentStatus status) throws Exception {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_APPOINTMENT_STATUS)) {
+            statement.setString(1, status.toString());
+            statement.setLong(2, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getStackTrace());
+            throw e;
+        }
+    }
+
     public Appointment parseAppointments(ResultSet resultSet) throws SQLException{
         int id = resultSet.getInt("id");
         int providerId = resultSet.getInt("provider_id");
@@ -126,9 +157,13 @@ public class AppointmentDao {
         boolean isVideo = resultSet.getBoolean("is_video_appt");
         String url = resultSet.getString("url");
         String status = resultSet.getString("status");
+        String patientEmail = resultSet.getString("patient_email");
+        String patientName = resultSet.getString("patient_name");
+        String providerEmail = resultSet.getString("provider_email");
+        String providerName = resultSet.getString("provider_name");
 
         return new Appointment(id, providerId, patientId, duration, isVideo,
-                "", "", "", "",
+                providerName, providerEmail, patientName, patientEmail,
                 date, time, url, AppointmentStatus.valueOf(status));
     }
 }

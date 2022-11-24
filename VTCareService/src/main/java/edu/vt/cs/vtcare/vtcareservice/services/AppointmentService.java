@@ -5,8 +5,11 @@ import edu.vt.cs.vtcare.meetingservices.models.MeetingDetails;
 import edu.vt.cs.vtcare.meetingservices.services.ZoomMeetingService;
 import edu.vt.cs.vtcare.vtcareservice.dao.AppointmentDao;
 import edu.vt.cs.vtcare.vtcareservice.models.Appointment;
+import edu.vt.cs.vtcare.vtcareservice.models.AppointmentStatus;
+import edu.vt.cs.vtcare.vtcareservice.models.Patient;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public class AppointmentService {
@@ -61,6 +64,23 @@ public class AppointmentService {
             return appointmentDao.getAppointmentsByPatientId(patientId);
         } catch (Exception e) {
             System.out.println("Encountered an issue while fetching upcoming appointments for patient.");
+            throw e;
+        }
+    }
+
+    /**
+     * Update appointment status.
+     * @param id id of appointment to change the status
+     * @param status updated status
+     * @return
+     * @throws SQLException
+     */
+    public void updateAppointmentStatus(long id, AppointmentStatus status) throws Exception {
+        try {
+            appointmentDao.updateAppointmentStatus(id, status);
+        } catch (Exception e) {
+            System.out.println("Encountered an issue while updating " +
+                               "appointment status");
             throw e;
         }
     }
