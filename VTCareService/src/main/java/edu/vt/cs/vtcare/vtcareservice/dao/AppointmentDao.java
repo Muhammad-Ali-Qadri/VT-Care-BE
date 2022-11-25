@@ -43,12 +43,22 @@ public class AppointmentDao {
             " WHERE appt.patient_id = ? ORDER BY date desc, time desc;";
 
     private static final String FIND_APPOINTMENT =
-            "SELECT * FROM appointments " +
-            "WHERE id = ?;";
+            "SELECT appt.*, pt.name 'patient_name', pt.email 'patient_email'," +
+            " pr.name 'provider_name', pr.email 'provider_email'" +
+            " FROM (appointments appt INNER JOIN patients pt ON pt.id = appt" +
+            ".patient_id)" +
+            " INNER JOIN providers pr ON pr.id = appt.provider_id" +
+            " WHERE appt.id = ? ORDER BY date desc, time desc;";
 
     private static final String UPDATE_APPOINTMENT_STATUS =
             "UPDATE appointments " +
             "SET status = ? " +
+            "WHERE id = ?;";
+
+    private static final String UPDATE_APPOINTMENT_SCHEDULE =
+            "UPDATE appointments " +
+            "SET date = ? " +
+            ", time = ? " +
             "WHERE id = ?;";
 
     /**
@@ -145,6 +155,24 @@ public class AppointmentDao {
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_APPOINTMENT_STATUS)) {
             statement.setString(1, status.toString());
             statement.setLong(2, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getStackTrace());
+            throw e;
+        }
+    }
+
+    /**
+     * Update appointment time.
+     * @param appointment object with new schedule
+     * @return
+     * @throws SQLException
+     */
+    public void updateAppointmentSchedule(Appointment appointment) throws Exception {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_APPOINTMENT_SCHEDULE)) {
+            statement.setDate(1, java.sql.Date.valueOf(appointment.getDate()));
+            statement.setString(2, appointment.getTime());
+            statement.setLong(3, appointment.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getStackTrace());

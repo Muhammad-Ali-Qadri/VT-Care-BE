@@ -255,4 +255,28 @@ public class VTCareResource {
         return Response.ok(apptService.getAppointmentList(providerId))
                 .build();
     }
+
+    /**
+     * Updates appointment schedule
+     * @param appointmentId: Id of the appointment to reschedule
+     * @throws Exception
+     */
+    @PATCH
+    @Path("appointments/{appointment-id}/reschedule")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProviderAppointments(@PathParam("appointment-id")
+                                                    int appointmentId,
+                                            Appointment appointment) throws Exception {
+
+        try{
+            AppointmentService apptService = new AppointmentService();
+            appointment.setId(appointmentId);
+            apptService.rescheduleAppointment(appointment);
+            return Response.ok().build();
+        }
+        catch(Exception e) {
+            throw new Exception("An exception occurred while rescheduling " +
+                                "appointment.");
+        }
+    }
 }

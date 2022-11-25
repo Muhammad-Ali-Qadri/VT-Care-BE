@@ -15,24 +15,21 @@ import java.util.List;
 
 public class AppointmentService {
     private final AppointmentDao appointmentDao;
+    private final MeetingService meetingService;
     private static final String PASSWORD = "123456";
 
     public AppointmentService() throws Exception {
         appointmentDao = new AppointmentDao();
+        meetingService = new ZoomMeetingService();
     }
 
-    /**
-     *
+    /***
+     * Schedule appointment
+     * @param appointment Appointment object with appointment details
+     * @return details with ids and urls
+     * @throws IOException
      */
     public Appointment scheduleAppointment(Appointment appointment) throws IOException {
-        MeetingResponse res = getMeetingResponse(appointment);
-        appointment.setUrl(res.getUrl());
-        appointment.setExternalId(res.getId());
-        appointment.setId(appointmentDao.persistAppointment(appointment));
-        return appointment;
-    }
-
-    private MeetingResponse getMeetingResponse(Appointment appointment) throws IOException {
         String agenda = String.format("Meeting for %s, with Dr. %s",
                 appointment.getPatientName(), appointment.getProviderName());
 
@@ -42,9 +39,27 @@ public class AppointmentService {
                 , appointment.getPatientName(), appointment.getPatientEmail()
                 , appointment.getDateTimeString(), appointment.getTime());
 
-        MeetingService meetingService = new ZoomMeetingService();
+        MeetingResponse res = meetingService.createMeeting(meetingDetails);
 
-        return meetingService.createMeeting(meetingDetails);
+        appointment.setUrl(res.getUrl());
+        appointment.setExternalId(res.getId());
+        appointment.setId(appointmentDao.persistAppointment(appointment));
+        return appointment;
+    }
+
+    /***
+     * ReSchedule appointment
+     * @param appointment Appointment object with appointment details
+     * @throws IOException
+     */
+    public void rescheduleAppointment(Appointment appointment) throws Exception {
+
+        Appointment prevAppt = appointmentDao.getAppointmentById(appointment.getId());
+
+        meetingService.rescheduleMeeting(prevAppt.getExternalId(),
+                appointment.getDateTimeString());
+
+        appointmentDao.updateAppointmentSchedule(appointment);
     }
 
     public List<Appointment> getAppointmentList(int providerId) throws Exception {

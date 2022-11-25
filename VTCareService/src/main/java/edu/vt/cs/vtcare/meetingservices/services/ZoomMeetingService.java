@@ -29,7 +29,6 @@ public class ZoomMeetingService implements MeetingService {
     @Override
     public MeetingResponse createMeeting(MeetingDetails details) throws IOException {
         ZoomMeetingDTO zoomMeetingDTO = createZoomDTO(details);
-        Gson gson = new Gson();
 
         String apiUrl =
                 String.format("https://api.zoom.us/v2/users/%s/meetings",
@@ -38,14 +37,29 @@ public class ZoomMeetingService implements MeetingService {
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Authorization", authValue);
-        String response = httpService.sendPostRequest(apiUrl,
-                gson.toJson(zoomMeetingDTO),
-                headers);
 
-        ZoomMeetingResponse res = gson.fromJson(response,
+        ZoomMeetingResponse res = httpService.sendRequest(apiUrl,
+                zoomMeetingDTO, headers, RequestType.POST,
                 ZoomMeetingResponse.class);
 
         return new MeetingResponse(res.getId(), res.getJoin_url());
+    }
+
+    @Override
+    public void rescheduleMeeting(String meetingId, String newDate) throws IOException {
+        String apiUrl =
+                String.format("https://api.zoom.us/v2/meetings/%s",
+                        URLEncoder.encode(meetingId, "UTF-8"));
+        String authValue = String.format("Bearer %s", JWT_TOKEN);
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Authorization", authValue);
+
+        ZoomMeetingRescheduleDTO dto = new ZoomMeetingRescheduleDTO(newDate,
+                TimeZone.getDefault().getID());
+
+        httpService.sendRequest(apiUrl, dto, headers, RequestType.PATCH,
+                Object.class);
     }
 
     private ZoomMeetingDTO createZoomDTO(MeetingDetails details){

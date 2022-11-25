@@ -1,10 +1,17 @@
 package edu.vt.cs.vtcare.meetingservices.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ZoomMeetingResponse {
     private String id;
     private String uuid;
     private String start_url;
     private String join_url;
+
+    public ZoomMeetingResponse(){
+
+    }
 
     public ZoomMeetingResponse(String id, String uuid, String start_url,
                                String join_url) {

@@ -53,6 +53,10 @@ public class Appointment {
         this.url = url;
         this.status = status;
 
+        parseDate(date);
+    }
+
+    private void parseDate(@JsonProperty("date") String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         this.date = LocalDate.parse(date, formatter);
     }

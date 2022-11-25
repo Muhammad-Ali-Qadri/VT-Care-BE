@@ -7,4 +7,6 @@ import java.io.IOException;
 
 public interface MeetingService {
     MeetingResponse createMeeting(MeetingDetails details) throws IOException;
+
+    void rescheduleMeeting(String meetingId, String newDate) throws IOException;
 }
