@@ -264,7 +264,7 @@ public class VTCareResource {
     @PATCH
     @Path("appointments/{appointment-id}/reschedule")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getProviderAppointments(@PathParam("appointment-id")
+    public Response rescheduleAppointment(@PathParam("appointment-id")
                                                     int appointmentId,
                                             Appointment appointment) throws Exception {
 
@@ -276,6 +276,28 @@ public class VTCareResource {
         }
         catch(Exception e) {
             throw new Exception("An exception occurred while rescheduling " +
+                                "appointment.");
+        }
+    }
+
+    /**
+     * Cancels appointment
+     * @param appointmentId: Id of the appointment to cancel
+     * @throws Exception
+     */
+    @PATCH
+    @Path("appointments/{appointment-id}/cancel")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response rescheduleAppointment(@PathParam("appointment-id")
+                                                  long appointmentId) throws Exception {
+
+        try{
+            AppointmentService apptService = new AppointmentService();
+            apptService.cancelAppointment(appointmentId);
+            return Response.ok().build();
+        }
+        catch(Exception e) {
+            throw new Exception("An exception occurred while cancelling " +
                                 "appointment.");
         }
     }

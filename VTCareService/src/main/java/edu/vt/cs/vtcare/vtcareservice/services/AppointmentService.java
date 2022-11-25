@@ -62,6 +62,17 @@ public class AppointmentService {
         appointmentDao.updateAppointmentSchedule(appointment);
     }
 
+    /***
+     * cancel appointment
+     * @param id the appointment id which needs to be cancelled
+     * @throws IOException
+     */
+    public void cancelAppointment(long id) throws Exception {
+        Appointment appt = appointmentDao.getAppointmentById(id);
+        meetingService.deleteMeeting(appt.getExternalId());
+        appointmentDao.updateAppointmentStatus(id, AppointmentStatus.CANCELLED);
+    }
+
     public List<Appointment> getAppointmentList(int providerId) throws Exception {
         try {
             return appointmentDao.getAppointmentsById(providerId);

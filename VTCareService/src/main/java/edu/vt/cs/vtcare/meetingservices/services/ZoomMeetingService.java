@@ -62,6 +62,20 @@ public class ZoomMeetingService implements MeetingService {
                 Object.class);
     }
 
+    @Override
+    public void deleteMeeting(String meetingId) throws IOException {
+        String apiUrl =
+                String.format("https://api.zoom.us/v2/meetings/%s",
+                        URLEncoder.encode(meetingId, "UTF-8"));
+        String authValue = String.format("Bearer %s", JWT_TOKEN);
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Authorization", authValue);
+
+        httpService.sendRequest(apiUrl, null, headers, RequestType.DELETE,
+                Object.class);
+    }
+
     private ZoomMeetingDTO createZoomDTO(MeetingDetails details){
         ZoomMeetingSettings settings = new ZoomMeetingSettings();
         settings.addAttendant(details.getPatientEmail(), details.getPatientName());

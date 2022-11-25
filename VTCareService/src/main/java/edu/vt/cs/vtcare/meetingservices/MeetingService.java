@@ -9,4 +9,6 @@ public interface MeetingService {
     MeetingResponse createMeeting(MeetingDetails details) throws IOException;
 
     void rescheduleMeeting(String meetingId, String newDate) throws IOException;
+
+    void deleteMeeting(String meetingId) throws IOException;
 }
