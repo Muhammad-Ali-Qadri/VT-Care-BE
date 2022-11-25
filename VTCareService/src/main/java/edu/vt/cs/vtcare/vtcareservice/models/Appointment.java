@@ -24,6 +24,7 @@ public class Appointment {
     private LocalDate date;
     private String time;
     private String url;
+    private String externalId;
 
     private AppointmentStatus status;
 
@@ -52,6 +53,10 @@ public class Appointment {
         this.url = url;
         this.status = status;
 
+        parseDate(date);
+    }
+
+    private void parseDate(@JsonProperty("date") String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         this.date = LocalDate.parse(date, formatter);
     }
@@ -60,7 +65,7 @@ public class Appointment {
                        boolean isVideoAppointment, String providerName,
                        String providerEmail, String patientName,
                        String patientEmail, LocalDate date, String time,
-                       String url, AppointmentStatus status) {
+                       String url, String externalId, AppointmentStatus status) {
         this.id = id;
         this.providerId = providerId;
         this.patientId = patientId;
@@ -73,12 +78,13 @@ public class Appointment {
         this.date = date;
         this.time = time;
         this.url = url;
+        this.externalId = externalId;
         this.status = status;
     }
 
     @JsonIgnore()
     public String getDateTimeString(){
-        return date + "T" + time + "Z";
+        return date + "T" + time + ":00";
     }
 
     public long getId() {
@@ -175,6 +181,14 @@ public class Appointment {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     public AppointmentStatus getStatus() {

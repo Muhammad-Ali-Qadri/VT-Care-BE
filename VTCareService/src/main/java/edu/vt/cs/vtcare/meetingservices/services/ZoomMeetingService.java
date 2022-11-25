@@ -27,9 +27,8 @@ public class ZoomMeetingService implements MeetingService {
     }
 
     @Override
-    public String createMeeting(MeetingDetails details) throws IOException {
+    public MeetingResponse createMeeting(MeetingDetails details) throws IOException {
         ZoomMeetingDTO zoomMeetingDTO = createZoomDTO(details);
-        Gson gson = new Gson();
 
         String apiUrl =
                 String.format("https://api.zoom.us/v2/users/%s/meetings",
@@ -38,20 +37,53 @@ public class ZoomMeetingService implements MeetingService {
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Authorization", authValue);
-        String response = httpService.sendPostRequest(apiUrl,
-                gson.toJson(zoomMeetingDTO),
-                headers);
 
-        return gson.fromJson(response, ZoomMeetingResponse.class).getJoin_url();
+        ZoomMeetingResponse res = httpService.sendRequest(apiUrl,
+                zoomMeetingDTO, headers, RequestType.POST,
+                ZoomMeetingResponse.class);
+
+        return new MeetingResponse(res.getId(), res.getJoin_url());
+    }
+
+    @Override
+    public void rescheduleMeeting(String meetingId, String newDate) throws IOException {
+        String apiUrl =
+                String.format("https://api.zoom.us/v2/meetings/%s",
+                        URLEncoder.encode(meetingId, "UTF-8"));
+        String authValue = String.format("Bearer %s", JWT_TOKEN);
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Authorization", authValue);
+
+        ZoomMeetingRescheduleDTO dto = new ZoomMeetingRescheduleDTO(newDate,
+                TimeZone.getDefault().getID());
+
+        httpService.sendRequest(apiUrl, dto, headers, RequestType.PATCH,
+                Object.class);
+    }
+
+    @Override
+    public void deleteMeeting(String meetingId) throws IOException {
+        String apiUrl =
+                String.format("https://api.zoom.us/v2/meetings/%s",
+                        URLEncoder.encode(meetingId, "UTF-8"));
+        String authValue = String.format("Bearer %s", JWT_TOKEN);
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Authorization", authValue);
+
+        httpService.sendRequest(apiUrl, null, headers, RequestType.DELETE,
+                Object.class);
     }
 
     private ZoomMeetingDTO createZoomDTO(MeetingDetails details){
         ZoomMeetingSettings settings = new ZoomMeetingSettings();
         settings.addAttendant(details.getPatientEmail(), details.getPatientName());
+        settings.addAttendant(details.getProviderEmail(), details.getProviderName());
 
         return new ZoomMeetingDTO(details.getAgenda(), details.getAgenda(),
                 details.getDuration(), details.getPassword(),
-                details.getScheduleTime(), TimeZone.getDefault().getDisplayName(),
+                details.getScheduleDate(), TimeZone.getDefault().getID(),
                 settings);
     }
 }

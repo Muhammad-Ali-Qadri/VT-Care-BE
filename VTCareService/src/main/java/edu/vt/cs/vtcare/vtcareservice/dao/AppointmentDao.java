@@ -18,8 +18,8 @@ public class AppointmentDao {
 
     private static final String CREATE_APPOINTMENT_SQL =
             "INSERT INTO appointments (provider_id, patient_id, date, " +
-            "time, duration, is_video_appt, url, status)" +
-            "SELECT ?, ?, ?, ?, ?, ?, ?, ?" +
+            "time, duration, is_video_appt, url, external_id, status)" +
+            "SELECT ?, ?, ?, ?, ?, ?, ?, ?, ? " +
             "WHERE NOT EXISTS (SELECT 1 FROM appointments WHERE provider_id =" +
             " " +
             "? AND date = ? AND time = ?) AND NOT EXISTS (SELECT 1 " +
@@ -42,9 +42,23 @@ public class AppointmentDao {
             " INNER JOIN providers pr ON pr.id = appt.provider_id" +
             " WHERE appt.patient_id = ? ORDER BY date desc, time desc;";
 
+    private static final String FIND_APPOINTMENT =
+            "SELECT appt.*, pt.name 'patient_name', pt.email 'patient_email'," +
+            " pr.name 'provider_name', pr.email 'provider_email'" +
+            " FROM (appointments appt INNER JOIN patients pt ON pt.id = appt" +
+            ".patient_id)" +
+            " INNER JOIN providers pr ON pr.id = appt.provider_id" +
+            " WHERE appt.id = ? ORDER BY date desc, time desc;";
+
     private static final String UPDATE_APPOINTMENT_STATUS =
             "UPDATE appointments " +
             "SET status = ? " +
+            "WHERE id = ?;";
+
+    private static final String UPDATE_APPOINTMENT_SCHEDULE =
+            "UPDATE appointments " +
+            "SET date = ? " +
+            ", time = ? " +
             "WHERE id = ?;";
 
     /**
@@ -66,15 +80,16 @@ public class AppointmentDao {
             statement.setInt(5, appointment.getDuration());
             statement.setBoolean(6, appointment.isVideoAppointment());
             statement.setString(7, appointment.getUrl());
-            statement.setString(8, appointment.getStatus().toString());
-            statement.setInt(9, appointment.getProviderId());
-            statement.setDate(10,
+            statement.setString(8, appointment.getExternalId());
+            statement.setString(9, appointment.getStatus().toString());
+            statement.setInt(10, appointment.getProviderId());
+            statement.setDate(11,
                     java.sql.Date.valueOf(appointment.getDate()));
-            statement.setString(11, appointment.getTime());
-            statement.setInt(12, appointment.getPatientId());
-            statement.setDate(13,
+            statement.setString(12, appointment.getTime());
+            statement.setInt(13, appointment.getPatientId());
+            statement.setDate(14,
                     java.sql.Date.valueOf(appointment.getDate()));
-            statement.setString(14, appointment.getTime());
+            statement.setString(15, appointment.getTime());
 
             statement.executeUpdate();
 
@@ -147,6 +162,47 @@ public class AppointmentDao {
         }
     }
 
+    /**
+     * Update appointment time.
+     * @param appointment object with new schedule
+     * @return
+     * @throws SQLException
+     */
+    public void updateAppointmentSchedule(Appointment appointment) throws Exception {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_APPOINTMENT_SCHEDULE)) {
+            statement.setDate(1, java.sql.Date.valueOf(appointment.getDate()));
+            statement.setString(2, appointment.getTime());
+            statement.setLong(3, appointment.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getStackTrace());
+            throw e;
+        }
+    }
+
+    /**
+     * Get appointment by  id
+     * @param id id of appointment to get its object
+     * @return String external id
+     * @throws SQLException
+     */
+    public Appointment getAppointmentById(long id) throws Exception {
+        try (PreparedStatement statement = connection.prepareStatement(FIND_APPOINTMENT)) {
+            statement.setLong(1, id);
+            ResultSet res = statement.executeQuery();
+            List<Appointment> appointmentList = new ArrayList<>();
+
+            while (res.next()) {
+                appointmentList.add(parseAppointments(res));
+            }
+
+            return appointmentList.get(0);
+        } catch (SQLException e) {
+            System.out.println(e.getStackTrace());
+            throw e;
+        }
+    }
+
     public Appointment parseAppointments(ResultSet resultSet) throws SQLException{
         int id = resultSet.getInt("id");
         int providerId = resultSet.getInt("provider_id");
@@ -156,6 +212,7 @@ public class AppointmentDao {
         int duration = resultSet.getInt("duration");
         boolean isVideo = resultSet.getBoolean("is_video_appt");
         String url = resultSet.getString("url");
+        String externalId = resultSet.getString("external_id");
         String status = resultSet.getString("status");
         String patientEmail = resultSet.getString("patient_email");
         String patientName = resultSet.getString("patient_name");
@@ -164,6 +221,6 @@ public class AppointmentDao {
 
         return new Appointment(id, providerId, patientId, duration, isVideo,
                 providerName, providerEmail, patientName, patientEmail,
-                date, time, url, AppointmentStatus.valueOf(status));
+                date, time, url, externalId, AppointmentStatus.valueOf(status));
     }
 }

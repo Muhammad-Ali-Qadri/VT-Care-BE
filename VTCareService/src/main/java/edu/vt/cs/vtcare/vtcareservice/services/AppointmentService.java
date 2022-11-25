@@ -2,6 +2,7 @@ package edu.vt.cs.vtcare.vtcareservice.services;
 
 import edu.vt.cs.vtcare.meetingservices.MeetingService;
 import edu.vt.cs.vtcare.meetingservices.models.MeetingDetails;
+import edu.vt.cs.vtcare.meetingservices.models.MeetingResponse;
 import edu.vt.cs.vtcare.meetingservices.services.ZoomMeetingService;
 import edu.vt.cs.vtcare.vtcareservice.dao.AppointmentDao;
 import edu.vt.cs.vtcare.vtcareservice.models.Appointment;
@@ -14,23 +15,22 @@ import java.util.List;
 
 public class AppointmentService {
     private final AppointmentDao appointmentDao;
+    private final MeetingService meetingService;
     private static final String PASSWORD = "123456";
 
     public AppointmentService() throws Exception {
         appointmentDao = new AppointmentDao();
+        meetingService = new ZoomMeetingService();
     }
 
-    /**
-     *
+    /***
+     * Schedule appointment
+     * @param appointment Appointment object with appointment details
+     * @return details with ids and urls
+     * @throws IOException
      */
     public Appointment scheduleAppointment(Appointment appointment) throws IOException {
-        appointment.setUrl(getMeetingUrl(appointment));
-        appointment.setId(appointmentDao.persistAppointment(appointment));
-        return appointment;
-    }
-
-    private String getMeetingUrl(Appointment appointment) throws IOException {
-        String agenda = String.format("Meeting for %s, with doctor %s",
+        String agenda = String.format("Meeting for %s, with Dr. %s",
                 appointment.getPatientName(), appointment.getProviderName());
 
         MeetingDetails meetingDetails = new MeetingDetails(agenda,
@@ -39,9 +39,38 @@ public class AppointmentService {
                 , appointment.getPatientName(), appointment.getPatientEmail()
                 , appointment.getDateTimeString(), appointment.getTime());
 
-        MeetingService meetingService = new ZoomMeetingService();
+        MeetingResponse res = meetingService.createMeeting(meetingDetails);
 
-        return meetingService.createMeeting(meetingDetails);
+        appointment.setUrl(res.getUrl());
+        appointment.setExternalId(res.getId());
+        appointment.setId(appointmentDao.persistAppointment(appointment));
+        return appointment;
+    }
+
+    /***
+     * ReSchedule appointment
+     * @param appointment Appointment object with appointment details
+     * @throws IOException
+     */
+    public void rescheduleAppointment(Appointment appointment) throws Exception {
+
+        Appointment prevAppt = appointmentDao.getAppointmentById(appointment.getId());
+
+        meetingService.rescheduleMeeting(prevAppt.getExternalId(),
+                appointment.getDateTimeString());
+
+        appointmentDao.updateAppointmentSchedule(appointment);
+    }
+
+    /***
+     * cancel appointment
+     * @param id the appointment id which needs to be cancelled
+     * @throws IOException
+     */
+    public void cancelAppointment(long id) throws Exception {
+        Appointment appt = appointmentDao.getAppointmentById(id);
+        meetingService.deleteMeeting(appt.getExternalId());
+        appointmentDao.updateAppointmentStatus(id, AppointmentStatus.CANCELLED);
     }
 
     public List<Appointment> getAppointmentList(int providerId) throws Exception {
