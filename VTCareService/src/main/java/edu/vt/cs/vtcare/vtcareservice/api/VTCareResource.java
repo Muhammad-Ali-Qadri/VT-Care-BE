@@ -301,4 +301,17 @@ public class VTCareResource {
                                 "appointment.");
         }
     }
+
+    @GET
+    @Path("patients/{patient-id}/getHistory")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PatientVisitHistory> getPatientHistory(@PathParam("patient-id")
+                                                  long patientId) throws Exception {
+        try {
+            PatientVisitHistoryService patientHistoryService = new PatientVisitHistoryService();
+            return patientHistoryService.findHistoryByPatientId(patientId);
+        } catch(Exception e) {
+            throw new Exception("An exception occurred while persisting the patient history.");
+        }
+    }
 }

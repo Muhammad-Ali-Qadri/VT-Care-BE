@@ -19,7 +19,7 @@ public class PatientVisitHistoryDao {
     }
 
     private static final String FIND_HISTORY_BY_PATIENT_ID_SQL =
-            "SELECT * FROM patient_visit_histories where patient_id = ?";
+            "SELECT * FROM patient_visit_histories where patient_id = ? order by id desc, appointment_date desc";
 
     private static final String INSERT_HISTORY_SQL =
             "INSERT INTO patient_visit_histories(patient_id, appointment_date, provider_name, diagnosis, prescription, notes)" +
