@@ -25,11 +25,12 @@ public final class VTCareJDBC {
         String password = "Ak@Mysql2022";
 
         try {
-            if (con == null) {
+            if (con == null || con.isClosed()) {
                 Class.forName("com.mysql.jdbc.Driver");
                 con = DriverManager.getConnection(url, user, password);
                 System.out.println("Successfully secured connection to VTCareDB.");
             }
+
             return con;
         } catch (SQLException e) {
             System.out.println("An exception occurred while creating DB Connection." + e);
